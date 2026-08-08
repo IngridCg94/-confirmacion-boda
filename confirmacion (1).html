@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirmación · Ingrid & Victor Hugo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --oxido:#b25623;
+    --arena:#d5af82;
+    --marino:#162a40;
+    --crema:#f4ead9;
+    --blanco:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(180deg,#f7efe1 0%, #ecd9b8 100%);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    color:var(--marino);
+  }
+  .card{
+    width:100%;
+    max-width:420px;
+    background:var(--crema);
+    border:1.5px solid var(--oxido);
+    outline:1px solid var(--arena);
+    outline-offset:6px;
+    border-radius:10px;
+    padding:40px 28px 32px;
+    text-align:center;
+  }
+  .eyebrow{
+    font-size:13px;letter-spacing:4px;color:var(--oxido);
+    text-transform:uppercase;margin-bottom:8px;font-weight:500;
+  }
+  .titulo{
+    font-family:'Great Vibes',cursive;
+    font-size:52px;color:var(--marino);line-height:1;margin-bottom:18px;
+  }
+  .paso-buscar p{font-size:15px;color:#4b4136;margin-bottom:16px;line-height:1.5;}
+  .buscador-wrap{position:relative;margin-bottom:6px;text-align:left;}
+  input[type=text]{
+    width:100%;padding:14px 16px;border-radius:10px;border:1.5px solid var(--arena);
+    font-family:'Poppins',sans-serif;font-size:16px;background:#fff;color:var(--marino);
+  }
+  input[type=text]:focus{outline:2px solid var(--oxido);}
+  .resultados{
+    margin-top:8px;border-radius:10px;overflow:hidden;border:1px solid var(--arena);
+    max-height:260px;overflow-y:auto;display:none;background:#fff;text-align:left;
+  }
+  .resultados.show{display:block;}
+  .resultado-item{
+    padding:12px 16px;font-size:15px;cursor:pointer;border-bottom:1px solid #f1e6d2;
+  }
+  .resultado-item:last-child{border-bottom:none;}
+  .resultado-item:hover, .resultado-item:active{background:var(--crema);}
+  .sin-resultados{padding:14px 16px;font-size:14px;color:#8a7a63;font-style:italic;}
+
+  .saludo{font-size:17px;margin-bottom:4px;}
+  .nombre{font-size:22px;font-weight:600;color:var(--oxido);margin-bottom:14px;}
+  .pases-box{
+    background:var(--marino);color:var(--blanco);border-radius:10px;
+    padding:14px 18px;margin-bottom:26px;font-size:15px;
+  }
+  .pases-box b{color:var(--arena);font-size:20px;}
+  .cambiar{
+    background:none;border:none;color:#8a7a63;text-decoration:underline;
+    font-family:'Poppins',sans-serif;font-size:13px;cursor:pointer;margin-bottom:22px;
+  }
+  .pregunta{font-size:16px;margin-bottom:18px;font-weight:500;}
+  .opciones{display:flex;gap:12px;margin-bottom:18px;}
+  .btn{
+    flex:1;padding:14px 10px;border-radius:30px;border:2px solid var(--oxido);
+    background:transparent;color:var(--oxido);font-family:'Poppins',sans-serif;
+    font-size:15px;font-weight:600;cursor:pointer;transition:all .15s ease;
+  }
+  .btn:hover{background:var(--oxido);color:#fff;}
+  .btn.si.selected{background:var(--oxido);color:#fff;}
+  .btn.no{border-color:#8a7a63;color:#8a7a63;}
+  .btn.no.selected{background:#8a7a63;color:#fff;}
+  .cantidad-wrap{margin-bottom:20px;display:none;}
+  .cantidad-wrap.show{display:block;}
+  .cantidad-label{font-size:14px;margin-bottom:10px;color:#4b4136;}
+  select{
+    font-family:'Poppins',sans-serif;font-size:16px;padding:10px 16px;
+    border-radius:30px;border:1.5px solid var(--arena);background:#fff;color:var(--marino);
+  }
+  .enviar{
+    width:100%;padding:16px;border:none;border-radius:40px;
+    background:var(--oxido);color:#fff;font-size:16px;font-weight:600;
+    letter-spacing:1px;text-transform:uppercase;cursor:pointer;margin-top:6px;
+  }
+  .enviar:disabled{opacity:.4;cursor:not-allowed;}
+  .estado{font-size:13px;color:#8a7a63;margin-top:14px;min-height:16px;}
+  .oculto{display:none;}
+  .gracias-script{font-family:'Great Vibes',cursive;font-size:44px;color:var(--oxido);margin-bottom:10px;}
+  .gracias-txt{font-size:15px;color:#4b4136;line-height:1.6;}
+  .error{color:#a33;font-size:14px;margin-top:10px;}
+  .footer-firma{font-family:'Great Vibes',cursive;font-size:28px;color:var(--marino);margin-top:20px;}
+
+  .link-admin{
+    margin-top:26px;font-size:11px;color:#c9bda3;text-decoration:underline;
+    cursor:pointer;letter-spacing:.5px;
+  }
+  .panel-admin{
+    position:fixed;inset:0;background:rgba(22,42,64,.75);z-index:999;
+    display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto;
+  }
+  .panel-inner{
+    background:#fff;border-radius:12px;max-width:800px;width:100%;padding:28px;margin-top:20px;
+  }
+  .panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  .panel-header h2{font-family:'Great Vibes',cursive;font-size:34px;color:var(--oxido);font-weight:normal;}
+  .cerrar-panel{
+    background:var(--marino);color:#fff;border:none;border-radius:20px;padding:8px 18px;
+    font-family:'Poppins',sans-serif;font-size:13px;cursor:pointer;
+  }
+  .pin-wrap p{font-size:14px;color:#4b4136;margin-bottom:14px;}
+  .pin-wrap input{
+    width:100%;padding:12px 14px;border-radius:8px;border:1.5px solid var(--arena);
+    font-size:16px;font-family:'Poppins',sans-serif;text-align:center;letter-spacing:4px;
+  }
+  .resumen-panel{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+  .stat-panel{background:var(--marino);color:#fff;border-radius:10px;padding:12px 18px;text-align:center;min-width:100px;}
+  .stat-panel .num{font-size:24px;font-weight:700;color:var(--arena);}
+  .stat-panel .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+  .tabla-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #eee;white-space:nowrap;}
+  th{background:var(--oxido);color:#fff;font-size:11px;text-transform:uppercase;}
+  .r-si{color:#2e7d32;font-weight:600;}
+  .r-no{color:#a33;font-weight:600;}
+  .btn-eliminar{
+    background:#a33;color:#fff;border:none;border-radius:14px;padding:4px 10px;
+    font-size:11px;cursor:pointer;font-family:'Poppins',sans-serif;
+  }
+  .btn-eliminar:disabled{opacity:.5;}
+  .celda-accion{white-space:nowrap;}
+  .confirmar-wrap{display:inline-flex;gap:6px;align-items:center;}
+  .btn-si-eliminar{
+    background:#a33;color:#fff;border:none;border-radius:14px;padding:4px 10px;
+    font-size:11px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;
+  }
+  .btn-cancelar-eliminar{
+    background:#eee;color:#4b4136;border:none;border-radius:14px;padding:4px 10px;
+    font-size:11px;cursor:pointer;font-family:'Poppins',sans-serif;
+  }
+  .oculto{display:none !important;}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="eyebrow">03 de octubre 2026</div>
+    <div class="titulo">Confirmación</div>
+
+    <!-- PASO 1: BUSCAR NOMBRE -->
+    <div id="pasoBuscar" class="paso-buscar">
+      <p>Escribe el nombre con el que fuiste invitado para encontrar tu invitación.</p>
+      <div class="buscador-wrap">
+        <input type="text" id="buscador" placeholder="Ej. Alfredo González" autocomplete="off">
+        <div class="resultados" id="resultados"></div>
+      </div>
+    </div>
+
+    <!-- PASO 2: FORMULARIO -->
+    <div id="pasoFormulario" class="oculto">
+      <div class="saludo">Con cariño invitamos a</div>
+      <div class="nombre" id="nombreFamilia">—</div>
+      <div class="pases-box">Pases reservados: <b id="pasesTotal">—</b></div>
+      <button class="cambiar" id="btnCambiar" type="button">No soy yo, buscar otro nombre</button>
+
+      <div class="pregunta">¿Podrás acompañarnos?</div>
+      <div class="opciones">
+        <button class="btn si" id="btnSi" type="button">Sí, asistiré</button>
+        <button class="btn no" id="btnNo" type="button">No podré ir</button>
+      </div>
+
+      <div class="cantidad-wrap" id="cantidadWrap">
+        <div class="cantidad-label">¿Cuántos de los pases confirmas?</div>
+        <select id="cantidad"></select>
+      </div>
+
+      <button class="enviar" id="btnEnviar" disabled>Enviar confirmación</button>
+      <div class="estado" id="estado"></div>
+    </div>
+
+    <!-- PASO 3: GRACIAS -->
+    <div id="pasoGracias" class="oculto">
+      <div class="gracias-script">Gracias</div>
+      <div class="gracias-txt" id="graciasTexto"></div>
+      <div class="footer-firma">Victor Hugo &amp; Ingrid</div>
+    </div>
+
+    <div class="link-admin" style="cursor:default;text-decoration:none;">Las respuestas se guardan automáticamente para Victor Hugo &amp; Ingrid</div>
+  </div>
+
+
+<script>
+// Lista de invitados (56 familias)
+const INVITADOS = [{"id": "FAM4-000", "nombre": "Rocío Estrada", "pases": 4}, {"id": "FAM4-001", "nombre": "Blanca Estela González Mañón", "pases": 4}, {"id": "FAM3-002", "nombre": "Andrea González Meza", "pases": 3}, {"id": "FAM3-003", "nombre": "Maricela González Mañon", "pases": 3}, {"id": "Par-004", "nombre": "Alfredo González Meza", "pases": 2}, {"id": "Par-005", "nombre": "Maximiliano Valdés González", "pases": 2}, {"id": "Par-006", "nombre": "Fernando Valdés González", "pases": 2}, {"id": "Par-007", "nombre": "Mónica González Mañón", "pases": 2}, {"id": "Par-008", "nombre": "Yadira González Mañón", "pases": 2}, {"id": "Par-009", "nombre": "Eduardo González González", "pases": 2}, {"id": "Par-010", "nombre": "Liza Abigail González González", "pases": 2}, {"id": "Par-011", "nombre": "María Angélica González Reyes", "pases": 2}, {"id": "Par-012", "nombre": "Verónica González Reyes", "pases": 3}, {"id": "Par-013", "nombre": "Jaime Omar Rangel González", "pases": 2}, {"id": "Par-014", "nombre": "Adán Rosales González", "pases": 2}, {"id": "Par-015", "nombre": "Eric Santos Montoya", "pases": 2}, {"id": "Par-016", "nombre": "Sofía Camarena González", "pases": 2}, {"id": "Par-017", "nombre": "Rafael Ontiveros", "pases": 2}, {"id": "Par-018", "nombre": "Guadalupe Lara Rebollar", "pases": 2}, {"id": "FAM3-019", "nombre": "Alfredo González Mañón", "pases": 3}, {"id": "Par-020", "nombre": "Doña Maru", "pases": 2}, {"id": "Par-021", "nombre": "Anahí Ramos", "pases": 2}, {"id": "Par-022", "nombre": "Laura García", "pases": 2}, {"id": "Par-023", "nombre": "Mariana García", "pases": 2}, {"id": "Par-024", "nombre": "Itzayana Carmona", "pases": 2}, {"id": "Par-025", "nombre": "Heliodoro Mañón Valdés", "pases": 2}, {"id": "Par-026", "nombre": "Jorge Mañón Valdés", "pases": 2}, {"id": "Par-027", "nombre": "Angelina Mañón Valdés", "pases": 2}, {"id": "Par-028", "nombre": "Marta Mañón Valdés", "pases": 2}, {"id": "Par-029", "nombre": "Martha Velázquez Mañón", "pases": 2}, {"id": "Ind-030", "nombre": "Consuelo Salinas Torres", "pases": 1}, {"id": "Ind-031", "nombre": "Víctor Hugo Pérez Bárcenas", "pases": 1}, {"id": "Ind-032", "nombre": "Ángel Daniel Pérez Salinas", "pases": 1}, {"id": "Par-033", "nombre": "Christian Pérez Salinas", "pases": 2}, {"id": "FAM4-034", "nombre": "Magaly Salinas Torres", "pases": 4}, {"id": "Ind-035", "nombre": "Geovani Salinas", "pases": 1}, {"id": "Ind-036", "nombre": "Evangelina Torres", "pases": 1}, {"id": "Par-037", "nombre": "Edith Salinas Torres", "pases": 2}, {"id": "FAM3-038", "nombre": "Teresa Salinas Torres", "pases": 3}, {"id": "FAM4-039", "nombre": "Fermín Salinas Torres", "pases": 4}, {"id": "FAM5-040", "nombre": "Jackeline Pérez Bárcenas", "pases": 5}, {"id": "FAM5-041", "nombre": "Yessika Pérez Bárcenas", "pases": 5}, {"id": "FAM3-042", "nombre": "Heidi Pérez Bárcenas", "pases": 3}, {"id": "FAM3-043", "nombre": "Guadalupe Pérez Bárcenas", "pases": 3}, {"id": "FAM4-044", "nombre": "Sandra Vaca", "pases": 4}, {"id": "Par-045", "nombre": "Luis Ramón Hernández García", "pases": 2}, {"id": "Par-046", "nombre": "Juan Román Ramírez Hernández", "pases": 2}, {"id": "Par-047", "nombre": "Jesús García Martínez", "pases": 2}, {"id": "Ind-048", "nombre": "Blanca Cortés Luna", "pases": 1}, {"id": "Ind-049", "nombre": "Gustavo Salvador Tavira", "pases": 1}, {"id": "Par-050", "nombre": "Adolfo Juárez Torres", "pases": 2}, {"id": "Par-051", "nombre": "Manuel Aguilera Lemus", "pases": 2}, {"id": "FAM4-052", "nombre": "Aketzalli De La Rivera Salinas", "pases": 4}, {"id": "Par-053", "nombre": "María Fernanda Tello Martínez", "pases": 2}, {"id": "Ind-054", "nombre": "Alejandro Pérez", "pases": 1}, {"id": "Ind-055", "nombre": "Osvaldo Hernández", "pases": 1}];
+
+// ⚠️ Reemplaza esta URL con la que te da Google Apps Script al implementar
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6ApnjGyvyL6dTiZXNzth75k6cAnxVpmOLGkvjSatz7uW4A83l_P_9Vlr2M6m46kKE/exec";
+
+function normaliza(s){
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+
+const pasoBuscar = document.getElementById('pasoBuscar');
+const pasoFormulario = document.getElementById('pasoFormulario');
+const pasoGracias = document.getElementById('pasoGracias');
+const buscador = document.getElementById('buscador');
+const resultadosDiv = document.getElementById('resultados');
+
+let invitadoActual = null;
+
+buscador.addEventListener('input', ()=>{
+  const q = normaliza(buscador.value.trim());
+  if(q.length < 2){ resultadosDiv.classList.remove('show'); resultadosDiv.innerHTML=''; return; }
+  const matches = INVITADOS.filter(i => normaliza(i.nombre).includes(q)).slice(0,8);
+  if(matches.length === 0){
+    resultadosDiv.innerHTML = '<div class="sin-resultados">No encontramos ese nombre. Intenta con otra parte de tu nombre, o escríbenos directo por WhatsApp.</div>';
+  } else {
+    resultadosDiv.innerHTML = matches.map(m =>
+      `<div class="resultado-item" data-id="${m.id}">${m.nombre}</div>`
+    ).join('');
+  }
+  resultadosDiv.classList.add('show');
+});
+
+resultadosDiv.addEventListener('click', (e)=>{
+  const item = e.target.closest('.resultado-item');
+  if(!item || !item.dataset.id) return;
+  const inv = INVITADOS.find(i => i.id === item.dataset.id);
+  if(inv) seleccionarInvitado(inv);
+});
+
+async function seleccionarInvitado(inv){
+  invitadoActual = inv;
+  document.getElementById('nombreFamilia').textContent = inv.nombre;
+  document.getElementById('pasesTotal').textContent = inv.pases;
+
+  const sel = document.getElementById('cantidad');
+  sel.innerHTML = '';
+  for(let i=1;i<=inv.pases;i++){
+    const opt = document.createElement('option');
+    opt.value = i; opt.textContent = i + (i===1 ? ' persona' : ' personas');
+    sel.appendChild(opt);
+  }
+  sel.value = inv.pases;
+
+  respuesta = null;
+  actualizarBotones();
+  document.getElementById('estado').textContent = '';
+
+  pasoBuscar.classList.add('oculto');
+  pasoFormulario.classList.remove('oculto');
+  pasoGracias.classList.add('oculto');
+}
+
+document.getElementById('btnCambiar').addEventListener('click', ()=>{
+  pasoFormulario.classList.add('oculto');
+  pasoBuscar.classList.remove('oculto');
+  buscador.value = '';
+  buscador.focus();
+});
+
+let respuesta = null;
+const btnSi = document.getElementById('btnSi');
+const btnNo = document.getElementById('btnNo');
+const cantidadWrap = document.getElementById('cantidadWrap');
+const btnEnviar = document.getElementById('btnEnviar');
+const estado = document.getElementById('estado');
+
+function actualizarBotones(){
+  btnSi.classList.toggle('selected', respuesta==='si');
+  btnNo.classList.toggle('selected', respuesta==='no');
+  cantidadWrap.classList.toggle('show', respuesta==='si');
+  btnEnviar.disabled = respuesta===null;
+}
+
+btnSi.addEventListener('click', ()=>{ respuesta='si'; actualizarBotones(); });
+btnNo.addEventListener('click', ()=>{ respuesta='no'; actualizarBotones(); });
+
+btnEnviar.addEventListener('click', async ()=>{
+  if(!invitadoActual) return;
+  btnEnviar.disabled = true;
+  estado.textContent = 'Guardando...';
+  const sel = document.getElementById('cantidad');
+  const data = {
+    id: invitadoActual.id, nombre: invitadoActual.nombre,
+    pasesReservados: invitadoActual.pases,
+    asistira: respuesta==='si',
+    cantidad: respuesta==='si' ? parseInt(sel.value,10) : 0,
+    fecha: new Date().toISOString()
+  };
+  try{
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(data)
+    });
+    pasoFormulario.classList.add('oculto');
+    pasoGracias.classList.remove('oculto');
+    document.getElementById('graciasTexto').textContent = respuesta==='si'
+      ? `Confirmamos ${data.cantidad} ${data.cantidad===1?'persona':'personas'} de tu familia. ¡Nos vemos el 3 de octubre!`
+      : 'Lamentamos que no puedas acompañarnos. Gracias por avisarnos con tiempo.';
+  }catch(e){
+    estado.innerHTML = '<span class="error">No se pudo guardar tu confirmación. Por favor intenta de nuevo o escríbenos directo por WhatsApp.</span>';
+    btnEnviar.disabled = false;
+  }
+});
+
+</script>
+</body>
+</html>
